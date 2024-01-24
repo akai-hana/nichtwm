@@ -6,6 +6,10 @@ struct nichtwm {
     struct wl_event_loop *wl_event_loop;
 
     struct wlr_backend *backend; // include backend member
+
+    struct wl_listener new_output;
+
+    struct wl_list outputs; // nichtwm_output::link
 };
 
 // wayland display event loop
