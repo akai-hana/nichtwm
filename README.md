@@ -1,3 +1,4 @@
-This will be my (akai_hana) future window manager. It will be based on Wayland + WLroots, and it will be the best off of DWM, hyprland and AwesomeWM.
+La parte práctica de mi proyecto de investigación en el instituto Front Marítim.
+_Tiling Window Manager_ basado en X11, desarrollado con Python y las librerías XCB y Xcffib/Xproto.
 
-that'll be nichtWM for you.
+-Matias Moya
