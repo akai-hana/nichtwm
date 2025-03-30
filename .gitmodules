@@ -16,3 +16,12 @@
 [submodule "research/tinywm"]
 	path = research/tinywm
 	url = https://github.com/mackstann/tinywm.git
+[submodule "research/python-window-manager"]
+	path = research/python-window-manager
+	url = https://github.com/csiew/BiscuitWM.git
+[submodule "research/xpywm"]
+	path = research/xpywm
+	url = https://github.com/h-ohsaki/xpywm.git
+[submodule "research/dwm"]
+	path = research/dwm
+	url = https://github.com/sr/dwm.git

@@ -1,0 +1,4 @@
+#!/bin/bash
+# nichtwm's example `.Xprofile` #
+
+feh --bg-fill --randomize /home/eudaimon/wallpapers &

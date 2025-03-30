@@ -21,6 +21,7 @@ from tiling import TilingManager
 # xcb
 import xcffib # Python bindings for the X11 protocol
 import xcffib.xproto as xproto # Protocol types, constants, window management, event handling, etc
+
 # System utilities
 import subprocess    # Shell commands and external processes
 import os   # Get home path, get cpu thread count
@@ -54,9 +55,6 @@ class WindowManager:
             with open(config_path) as f:
                 self.config = yaml.safe_load(f)
                 logging.debug(f"Loaded config: {self.config}")
-                window_gap = self.config.get('gap')
-
-                print(window_gap)
 
         except FileNotFoundError:
             logging.error(f"Config file not found: {config_path}")
@@ -66,55 +64,49 @@ class WindowManager:
             logging.error(f"Error loading YAML config: {e}")
             self.config = {}
 
-        ## Imports
         # Keycodes/Keysyms utils
         self.key_util = KeyUtil(self.conn)
-        # Tiling layouts
-        #WIP#
 
-        ## Windows & Workspaces
         # Windows
         self.windows = []
-        self.current_window = 0
+        self.current_window = 0 # X root window is 0, then 1-indexed for spawned windows
+        self.num_windows = 0
 
         # Workspaces
-        self.workspaces = [{'windows': [], 'tiling_manager': TilingManager(self.conn, self.screen, self.root_window)} for _ in range(6)]
+        self.workspaces = [{'windows': [], 'tiling_manager': TilingManager(self.conn, self.screen, self.root_window)} for _ in range(self.config['num-o-workspaces'])]
         self.current_workspace = 0
-
-        self.num_windows = 0 # workaround to fix window killing not being recognized, messing with tiling bug
 
     """Event loop of the WM; setup && run nichtwm."""
     def run(self) -> None:
-        try:
-            # If root window fails to configure, exit gracefully
-            if not self._setup_event_mask():
-                logging.error("Failed to configure root window. Exiting gracefully.")
-                raise RuntimeError("Root window configuration failed.")
+        # If root window fails to configure, exit gracefully
+        if not self._setup_event_mask():
+            logging.error("Failed to configure root window. Exiting gracefully.")
+            raise RuntimeError("Root window configuration failed.")
 
+        try:
             self._grab_keys()
             self._start_event_loop()
 
         except Exception as e:
-            logging.exception(f"An error ocurred: {e}")
-            self._graceful_shutdown()
-
-        finally:
+            logging.exception(f"An error ocurred during nichtwm's event loop: {e}")
             self._graceful_shutdown()
 
     """Event mask listen for X events"""
     def _setup_event_mask(self) -> bool:
         logging.debug(f"Setting up event mask for root window: {self.root_window}")
+
         cookie = self.conn.core.ChangeWindowAttributesChecked(
             self.root_window,
             xproto.CW.EventMask, # Window attribute to set which events we want
+
             [
-                # Listen for substructure changes (window creation/deletion, resizes, etc.)
+                # For substructure changes (window creation/deletion, resizes, etc.)
                 xproto.EventMask.SubstructureNotify |
                 # Redirect substructure notifications for children to the root window.
                 xproto.EventMask.SubstructureRedirect |
-                # keypresses
+                # Keypresses
                 xproto.EventMask.KeyPress |
-                # cursor hover window focus
+                # Cursor hover window focus
                 xproto.EventMask.EnterWindow
             ]
         )
@@ -130,7 +122,7 @@ class WindowManager:
             return False
 
     """Grab key events defined on config.yaml"""
-    def _grab_keys(self) -> None:
+    def _grab_keys(self) -> Nnnnsaone:
         if self.config['modifier'].lower() == 'alt':
             self.config['modifier'] = '_1'
         if self.config['modifier'].lower() == 'super':
@@ -161,8 +153,6 @@ class WindowManager:
                     xproto.GrabMode.Async,  # Non-blocking for key press events
                     xproto.GrabMode.Async   # Non-blocking for key release events
                 ).check()
-
-                print(modifier)
 
             except xproto.AccessError as e:
                 logging.error(f"Failed to grab key {action['key']} # with modifier {self.config['modifier']}: {e}")
