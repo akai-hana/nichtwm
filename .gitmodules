@@ -1,0 +1,18 @@
+[submodule "cwm"]
+	path = cwm
+	url = https://github.com/pguerin3/cwmrc.git
+[submodule "python-window-manager"]
+	path = python-window-manager
+	url = https://github.com/csiew/BiscuitWM.git
+[submodule "tinywm"]
+	path = tinywm
+	url = https://github.com/mackstann/tinywm.git
+[submodule "xpywm"]
+	path = xpywm
+	url = https://github.com/h-ohsaki/xpywm.git
+[submodule "research/cwm"]
+	path = research/cwm
+	url = https://github.com/pguerin3/cwmrc.git
+[submodule "research/tinywm"]
+	path = research/tinywm
+	url = https://github.com/mackstann/tinywm.git
